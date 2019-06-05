@@ -69,9 +69,8 @@ ui <- fluidPage(
       h2("When are they most frequent?"),
       plotOutput("distPlot"),
       h2("Where are they happening?"),
-      plotOutput("neig_freq")
-      
-      
+      plotOutput("neig_freq"),
+      textOutput("credit")
     )
   )
 )

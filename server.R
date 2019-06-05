@@ -79,5 +79,9 @@ server <- function(input, output) {
            subtitle = "in each selected section")
     
   })
+  
+  output$credit <- renderText ({
+    paste("Data set is provided by the City of Seattle, and can be accessed by visiting https://data.seattle.gov/Public-Safety/Crime-Data/4fs7-3vj5")
+  })
 }
 shinyServer(server)
