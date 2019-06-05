@@ -12,18 +12,13 @@ occured_time <- unlist(filtered[3])
 reported_date <- unlist(filtered[4])
 reported_time <- unlist(filtered[5])
 crime_subcategory <- unlist(filtered[6])
-<<<<<<< HEAD
 offence <- unlist(filtered[7])
-=======
-primary_offence_description <- unlist(filtered[7])
->>>>>>> 09b5de9a6b875a689457bc99bdab925f15e4207d
 precinct <- unlist(filtered[8])
 sector <- unlist(filtered[9])
 beat <- unlist(filtered[10])
 neighborhood <- unlist(filtered[11])
 
 filtered_df <- data.frame(report_number, occurred_date, occured_time, reported_date, reported_time, 
-<<<<<<< HEAD
                           crime_subcategory, offence, precinct, sector, beat,
                           neighborhood)
 my_ui <- fluidPage(
@@ -46,8 +41,3 @@ my_ui <- fluidPage(
 )
 
 shinyUI(my_ui)
-=======
-                          crime_subcategory, primary_offence_description, precinct, sector, beat,
-                          neighborhood)
-
->>>>>>> 09b5de9a6b875a689457bc99bdab925f15e4207d
