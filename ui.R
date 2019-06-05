@@ -45,6 +45,7 @@ ui <- fluidPage(
       h1("Hello :)"),
       ## Allows users to select which variable to examine homicide data over 
       ## Precinct, Location Sector, or Neighborhood
+
       checkboxGroupInput("type",
                          "Select Type of Homicide(s):",
                          choices = c("Premeditated-BODYFORCE" = "HOMICIDE-PREMEDITATED-BODYFORCE",
@@ -76,6 +77,7 @@ ui <- fluidPage(
       plotOutput("distPlot"),
       plotOutput("neig_freq"),
       textOutput("amounttt")
+
     )
   )
 )

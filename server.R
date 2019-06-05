@@ -1,4 +1,3 @@
-
 library(shiny)
 library(ggplot2)
 library(dplyr)
@@ -52,6 +51,7 @@ server <- function(input, output) {
     ggplot(subset_df, aes(x = occured_time, fill = occured_time)) + geom_histogram(stat = 'count') +
       xlab("Hour of Day") + ylab("Amount of Homicides") + ggtitle("Graph of Homicides Commited at Corresponding Hours") 
     
+
   })
   
   output$amounttt <- renderText( {
@@ -72,5 +72,22 @@ server <- function(input, output) {
     
   })
   
+  output$amounttt <- renderText( {
+    subset_df <- subset(filtered_df, filtered_df$occurred_date >= input$daterange[1] & filtered_df$occurred_date <= input$daterange[2])
+    paste("There have been", nrow(subset_df) ,"homicides in Seattle within your time frame")
+  })
+  
+  output$neig_freq <- renderPlot({
+    newdata <- select(subset_df, sector, neighborhood)
+    newdata1 <- filter(subset_df, sector == input$sectorInput)
+    newdata2 <- count(newdata1$neighborhood)
+    colnames(newdata2) <- c("neighborhood", "freq")
+    newdata3 <- newdata2[order(newdata2$freq), ]
+    ggplot(newdata3, aes(x = neighborhood, y = freq))+
+      geom_bar(stat = "identity", width = .5, fill="tomato2")+
+      labs(title = "Neighborhood v.s. Frequency",
+           subtitle = "in each selected section")
+
+  })
 }
 shinyServer(server)
