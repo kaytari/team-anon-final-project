@@ -84,8 +84,10 @@ server <- function(input, output) {
     re_subset()
     neighborhoods <- group_by(re_subset(), neighborhood) %>%
       summarize(count = n())
+    total_homicides <- sum(neighborhoods$count)
+    print(total_homicides)
     lbls <- neighborhoods$neighborhood
-    lbls <- paste(lbls, neighborhoods$count)
+    lbls <- paste(lbls, round(neighborhoods$count/total_homicides * 100, digits = 2), "%")
     pie(neighborhoods$count, labels = lbls, 
         main = "Piechart of Neighborhoods vs. Amount of Homicides")
 
