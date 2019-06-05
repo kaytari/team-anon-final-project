@@ -47,7 +47,7 @@ server <- function(input, output) {
     
     # types_selected <- filter(subset_df, offence %in% input$type)
     # types_selected$offence <- gsub("HOMICIDE-", "", types_selected$offence)
-    ggplot(subset_df, aes(x = offence, fill = offence)) +
+    ggplot(subset_df, aes(x = offence, fill = neighborhood)) +
       geom_bar(stat = "count") + 
       ylab("Amount of Homicides") + xlab("") + ggtitle("Types of Homicides vs. Amount of Homicides") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
@@ -58,7 +58,7 @@ server <- function(input, output) {
   output$distPlot <- renderPlot({
     subset_df <- subset(filtered_df, filtered_df$occurred_date >= input$daterange[1] & filtered_df$occurred_date <= input$daterange[2])
     subset_df <- subset(subset_df, subset_df$sector == input$sectorInput)
-    ggplot(subset_df, aes(x = occured_time, fill = occured_time)) + geom_histogram(stat = 'count') +
+    ggplot(subset_df, aes(x = occured_time, fill = neighborhood)) + geom_histogram(stat = 'count') +
       xlab("Hour of Day") + ylab("Amount of Homicides") + ggtitle("Graph of Homicides Commited at Corresponding Hours") 
     
   })
