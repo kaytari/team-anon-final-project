@@ -42,20 +42,9 @@ filtered_df$occured_time <- temp
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
-      h1("Hello :)"),
+      h1("View Data Based off Sector and Time Frame"),
       ## Allows users to select which variable to examine homicide data over 
       ## Precinct, Location Sector, or Neighborhood
-
-      checkboxGroupInput("type",
-                         "Select Type of Homicide(s):",
-                         choices = c("Premeditated-BODYFORCE" = "HOMICIDE-PREMEDITATED-BODYFORCE",
-                                     "Premidated-WEAPON" = "HOMICIDE-PREMEDITATED-WEAPON",
-                                     "Premidated-GUN" = "HOMICIDE-PREMEDITATED-GUN",
-                                     "Neg-Mans-BODYFORCE" = "HOMICIDE-NEG-MANS-BODYFORCE",
-                                     "Neg-Mans-VEHICLE" = "HOMICIDE-NEG-MANS-VEHICLE",
-                                     "Neg-Mans-WEAPON" = "HOMICIDE-NEG-MANS-WEAPON"),
-      ),
-      
       selectInput("sectorInput",
                   "Choose a Sector:",
                   choices = c("B", "C", "D", "E","F", "G", "J", "K", "L", "M", "N", "O", "Q", "R", "S", "U", "W")
@@ -73,11 +62,16 @@ ui <- fluidPage(
       )
     ),
     mainPanel(
+      h2("What's the number homicides occured in this sector and time frame?"),
+      textOutput("amounttt"),
+      h2("How are homicides commited?"),
       plotOutput("barGraph"),
+      h2("When are they most frequent?"),
       plotOutput("distPlot"),
-      plotOutput("neig_freq"),
-      textOutput("amounttt")
-
+      h2("Where are they happening?"),
+      plotOutput("neig_freq")
+      
+      
     )
   )
 )
