@@ -2,6 +2,8 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 library(ggthemes)
+library(lubridate)
+library(xts)
 bcl <- read.csv("data/Crime_Data.csv", stringsAsFactors = FALSE)
 filtered <- bcl %>% filter(bcl$Crime.Subcategory == "HOMICIDE")
 filtered <- filtered[-c(1:37), ]
@@ -22,7 +24,7 @@ filtered_df <- data.frame(report_number, occurred_date, occured_time, reported_d
                           crime_subcategory, offence, precinct, sector, beat,
                           neighborhood)
 
-my_server <- function(input, output){
+server <- function(input, output){
   # creates table of data to use when plotting
   get_count <- reactive({
     df_summary <- filtered_df %>%
@@ -47,6 +49,20 @@ my_server <- function(input, output){
          srt = 50, adj= 1, xpd = TRUE,
          labels = paste(rownames(get_count())), cex=0.65)
   })
+  
+  output$distPlot <- renderPlot({
+    subset_df <- subset(filtered_df, filtered_df$occurred_date >= input$daterange[1] & filtered_df$occurred_date <= input$daterange[2])
+    View(subset_df)
+    
+    ggplot(subset_df, aes(x = occured_time, fill = occured_time)) + geom_histogram(stat = 'count') +
+      xlab("Hour of Day") + ylab("Amount of Homicides") + ggtitle("Graph of Homicides Commited at Corresponding Hours") 
+    
+  })
+  
+  output$amounttt <- renderText( {
+    subset_df <- subset(filtered_df, filtered_df$occurred_date >= input$daterange[1] & filtered_df$occurred_date <= input$daterange[2])
+    paste("There have been", nrow(subset_df) ,"homicides in Seattle within your time frame")
+  })
 }
 
-shinyServer(my_server)
+shinyServer(server)
