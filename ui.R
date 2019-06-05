@@ -64,6 +64,7 @@ ui <- fluidPage(
     mainPanel(
       plotOutput("barGraph"),
       plotOutput("distPlot"),
+      plotOutput("neig_freq")
       textOutput("amounttt")
       
     )

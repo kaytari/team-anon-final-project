@@ -4,6 +4,7 @@ library(dplyr)
 library(ggthemes)
 library(lubridate)
 library(xts)
+library(tidyr)
 bcl <- read.csv("data/Crime_Data.csv", stringsAsFactors = FALSE)
 filtered <- bcl %>% filter(bcl$Crime.Subcategory == "HOMICIDE")
 filtered <- filtered[-c(1:37), ]
@@ -34,9 +35,24 @@ server <- function(input, output) {
       xlab("Hour of Day") + ylab("Amount of Homicides") + ggtitle("Graph of Homicides Commited at Corresponding Hours") 
     
   })
+  
   output$amounttt <- renderText( {
     subset_df <- subset(filtered_df, filtered_df$occurred_date >= input$daterange[1] & filtered_df$occurred_date <= input$daterange[2])
     paste("There have been", nrow(subset_df) ,"homicides in Seattle within your time frame")
   })
+  
+  output$neig_freq <- renderPlot({
+    newdata <- select(subset_df, sector, neighborhood)
+    newdata1 <- filter(subset_df, sector == input$sectorInput)
+    newdata2 <- count(newdata1$neighborhood)
+    colnames(newdata2) <- c("neighborhood", "freq")
+    newdata3 <- newdata2[order(newdata2$freq), ]
+    ggplot(newdata3, aes(x = neighborhood, y = freq))+
+      geom_bar(stat = "identity", width = .5, fill="tomato2")+
+      labs(title = "Neighborhood v.s. Frequency",
+           subtitle = "in each selected section")
+
+  })
+
 }
 shinyServer(server)
