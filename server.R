@@ -1,7 +1,11 @@
+
 library(shiny)
 library(ggplot2)
 library(dplyr)
 library(ggthemes)
+library(lubridate)
+library(xts)
+library(tidyr)
 bcl <- read.csv("data/Crime_Data.csv", stringsAsFactors = FALSE)
 filtered <- bcl %>% filter(bcl$Crime.Subcategory == "HOMICIDE")
 filtered <- filtered[-c(1:37), ]
@@ -19,34 +23,54 @@ beat <- unlist(filtered[10])
 neighborhood <- unlist(filtered[11])
 
 filtered_df <- data.frame(report_number, occurred_date, occured_time, reported_date, reported_time, 
-                          crime_subcategory, offence, precinct, sector, beat,
-                          neighborhood)
+                           crime_subcategory, offence, precinct, sector, beat,
+                           neighborhood)
 
-my_server <- function(input, output){
-  # creates table of data to use when plotting
-  get_count <- reactive({
-    df_summary <- filtered_df %>%
-      select(input$variable) %>%
-      table() 
-  })
-  # color palette of light blue to blue
-  pal <- reactive({ 
-    pal1 <- colorRampPalette(colors = c("lightblue", "blue"))(nrow(get_count()))
-  })
-  # creates bar graph of selected variable vs number of homicides
+server <- function(input, output) {
+  
   output$barGraph <- renderPlot({
-    par(mar = c(8, 4, 2, 2) + 1)
+    df_summary <- filtered_df %>%
+      group_by(offence) %>%
+      summarize(count = n())
     
-    end_point = 0.5 + nrow(get_count()) + nrow(get_count())-1
-    
-    barplot(get_count(), ylab = "Number of Homicides", 
-            col = pal(),
-            main = paste("homicides vs.", input$variable), xaxt = "n", space = 1)
-    
-    text(seq(1.5,end_point,by=2), par("usr")[3]-0.25, 
-         srt = 50, adj= 1, xpd = TRUE,
-         labels = paste(rownames(get_count())), cex=0.65)
-  })
-}
+    types_selected <- filter(df_summary, offence %in% input$type)
+    types_selected$offence <- gsub("HOMICIDE-", "", types_selected$offence)
+    ggplot(types_selected, aes(offence, count, label = count, 
+                               fill = count)) +
+      geom_bar(stat = "identity", width = .15 * length(input$type)) + 
+      geom_text(size = 5, vjust = 0, color = "black") +
+      ylab("Amount of Homicides") + xlab("") + ggtitle("Types of Homicides vs. Amount of Homicides") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
-shinyServer(my_server)
+    
+  })
+  
+  output$distPlot <- renderPlot({
+    subset_df <- subset(filtered_df, filtered_df$occurred_date >= input$daterange[1] & filtered_df$occurred_date <= input$daterange[2])
+    subset_df <- subset(subset_df, subset_df$sector == input$sectorInput)
+    View(subset_df)
+    ggplot(subset_df, aes(x = occured_time, fill = occured_time)) + geom_histogram(stat = 'count') +
+      xlab("Hour of Day") + ylab("Amount of Homicides") + ggtitle("Graph of Homicides Commited at Corresponding Hours") 
+    
+  })
+  
+  output$amounttt <- renderText( {
+    subset_df <- subset(filtered_df, filtered_df$occurred_date >= input$daterange[1] & filtered_df$occurred_date <= input$daterange[2])
+    paste("There have been", nrow(subset_df) ,"homicides in Seattle within your time frame")
+  })
+  
+  output$neig_freq <- renderPlot({
+    newdata <- select(subset_df, sector, neighborhood)
+    newdata1 <- filter(subset_df, sector == input$sectorInput)
+    newdata2 <- count(newdata1$neighborhood)
+    colnames(newdata2) <- c("neighborhood", "freq")
+    newdata3 <- newdata2[order(newdata2$freq), ]
+    ggplot(newdata3, aes(x = neighborhood, y = freq))+
+      geom_bar(stat = "identity", width = .5, fill="tomato2")+
+      labs(title = "Neighborhood v.s. Frequency",
+           subtitle = "in each selected section")
+    
+  })
+  
+}
+shinyServer(server)
