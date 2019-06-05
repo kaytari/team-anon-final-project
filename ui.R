@@ -66,10 +66,16 @@ ui <- fluidPage(
       textOutput("amounttt"),
       h2("How are homicides commited?"),
       plotOutput("barGraph"),
+      textOutput("how"),
       h2("When are they most frequent?"),
       plotOutput("distPlot"),
+      textOutput("when"),
       h2("Where are they happening?"),
       plotOutput("neig_freq"),
+      textOutput("where"),
+      br(),
+      br(),
+      plotOutput("pieGraph"),
       textOutput("credit")
     )
   )
