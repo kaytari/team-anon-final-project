@@ -1,0 +1,12 @@
+---
+title: "SectionMap"
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##This is a map of the police sections in the city of Seattle.
+![map](img.png)
