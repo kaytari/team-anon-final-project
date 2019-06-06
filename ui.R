@@ -8,6 +8,7 @@ bcl <- read.csv("data/Crime_Data.csv", stringsAsFactors = FALSE)
 filtered <- bcl %>% filter(bcl$Crime.Subcategory == "HOMICIDE")
 filtered <- filtered[-c(1:37), ]
 
+# Flattens out data and puts everything into a filtered_df
 report_number <- unlist(filtered[1])
 occurred_date <- unlist(filtered[2])
 occured_time <- unlist(filtered[3])
@@ -24,6 +25,7 @@ filtered_df <- data.frame(report_number, occurred_date, occured_time, reported_d
                           crime_subcategory, offence, precinct, sector, beat,
                           neighborhood)
 
+# Fixes the dates so that they are usable
 holder <- (filtered_df$occurred_date)
 holder2 <- mdy(holder)
 
@@ -31,6 +33,7 @@ filtered_df$occurred_date <- holder2
 
 filtered_df$reported_date <- mdy(filtered_df$reported_date)
 
+# Reformats the time column to be more useful
 temp <- filtered_df$occured_time 
 temp <- signif(temp, digits = 2)
 temp2 <- mapply(function(x, y) paste0(rep(x, y), collapse = ""), 0, 4 - nchar(temp))
@@ -44,7 +47,7 @@ ui <- fluidPage(
     sidebarPanel(
       h1("View Data Based off Sector and Time Frame"),
       ## Allows users to select which variable to examine homicide data over 
-      ## Precinct, Location Sector, or Neighborhood
+      ## Sector and Date Range
       selectInput("sectorInput",
                   "Choose a Sector:",
                   choices = c("B", "C", "D", "E","F", "G", "J", "K", "L", "M", "N", "O", "Q", "R", "S", "U", "W")
